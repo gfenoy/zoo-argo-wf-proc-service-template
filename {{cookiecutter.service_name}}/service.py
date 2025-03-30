@@ -28,31 +28,41 @@ except ImportError:
 
 class ArgoWFRunnerExecutionHandler(ExecutionHandler):
     def get_pod_env_vars(self):
-        # sets two env vars in the pod launched by Calrissian
-        return {"A": "1", "B": "1"}
+        logger.info("get_pod_env_vars")
+
+        env_vars: Dict[str, str] = {}
+        env_vars = self.conf.get("pod_env_vars", {})
+
+        return env_vars
 
     def get_pod_node_selector(self):
-        return None
+        logger.info("get_pod_node_selector")
+        node_selector: Dict[str, str] = {}
+        node_selector = self.conf.get("pod_node_selector", {})
+
+        logger.info(f"node_selector: {node_selector.keys()}")
+
+        return node_selector
 
     def get_secrets(self):
-        pass
+        logger.info("get_secrets")
+        secrets={
+            "imagePullSecrets": self.local_get_file("/assets/pod_imagePullSecrets.yaml"),
+            "additionalImagePullSecrets": self.local_get_file("/assets/pod_additionalImagePullSecrets.yaml")
+        }
+        return secrets
 
     def get_additional_parameters(self):
         # sets the additional parameters for the execution
         # of the wrapped Application Package
 
-        zoo.info("get_additional_parameters")
+        logger.info("get_additional_parameters")
+        additional_parameters: Dict[str, str] = {}
+        additional_parameters = self.conf.get("additional_parameters", {})
 
-        additional_parameters = {
-            "s3_bucket": "results",
-            "sub_path": self.conf["lenv"]["usid"],
-            "region_name": "it-rom",
-            "aws_secret_access_key": "minio-admin",
-            "aws_access_key_id": "minio-admin",
-            "endpoint_url": "http://minio.ns1.svc.cluster.local:9000",
-        }
+        additional_parameters["sub_path"] = self.conf["lenv"]["usid"]
 
-        zoo.info(f"additional_parameters: {additional_parameters.keys()}")
+        logger.info(f"additional_parameters: {additional_parameters.keys()}")
 
         return additional_parameters
 
