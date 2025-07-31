@@ -82,7 +82,7 @@ class ArgoWFRunnerExecutionHandler(ExecutionHandler):
         services_logs = [
             {
                 "url": os.path.join(
-                    self.conf["main"]["tmpUrl"].replace("/temp/",f"/{self.conf['auth_env']['ouser']}/temp/"),
+                    self.conf["main"]["tmpUrl"].replace("/temp/",f"/{self.conf['auth_env']['user']}/temp/"),
                     f"{self.conf['lenv']['Identifier']}-{self.conf['lenv']['usid']}",
                     os.path.basename(tool_log),
                 ),
