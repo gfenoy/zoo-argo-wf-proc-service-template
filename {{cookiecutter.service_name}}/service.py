@@ -123,8 +123,10 @@ def {{cookiecutter.workflow_id |replace("-", "_")  }}(conf, inputs, outputs):
         cwl = yaml.safe_load(stream)
 
     proxy_url = os.environ.pop("HTTP_PROXY", None)
-    conf["auth_env"]["ouser"]=conf["auth_env"]["user"]
-    conf["auth_env"]["user"]="ns1"
+    conf["argo"]={
+        "namespace":
+            os.environ.get("ARGO_WF_NAMESPACE", "argo")
+    }
     runner = ZooArgoWorkflowsRunner(
         cwl=cwl,
         conf=conf,
