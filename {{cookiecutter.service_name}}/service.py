@@ -5,39 +5,30 @@ import pathlib
 from loguru import logger
 import yaml
 
-from zoo_argowf_runner.runner import ExecutionHandler, ZooArgoWorkflowsRunner
+from zoo_argowf_runner.runner import ZooArgoWorkflowsRunner
+
+#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../zoo-runner-common')))
+#from base_handler import ExecutionHandler
+
+from common_execution_handler import CommonExecutionHandler
+
+from zoostub import ZooStub
+zoo = ZooStub()
 
 
-try:
-    import zoo
-except ImportError:
 
-    class ZooStub(object):
-        def __init__(self):
-            self.SERVICE_SUCCEEDED = 3
-            self.SERVICE_FAILED = 4
-
-        def update_status(self, conf, progress):
-            print(f"Status {progress}")
-
-        def _(self, message):
-            print(f"invoked _ with {message}")
-
-    zoo = ZooStub()
-
-
-class ArgoWFRunnerExecutionHandler(ExecutionHandler):
-    def get_pod_env_vars(self):
+class ArgoWFRunnerExecutionHandler(CommonExecutionHandler):
+    def get_pod_env_vars(self, **kwargs):
         # sets two env vars in the pod launched by Calrissian
         return {"A": "1", "B": "1"}
 
-    def get_pod_node_selector(self):
+    def get_pod_node_selector(self, **kwargs):
         return None
 
-    def get_secrets(self):
+    def get_secrets(self, **kwargs):
         pass
 
-    def get_additional_parameters(self):
+    def get_additional_parameters(self, **kwargs):
         # sets the additional parameters for the execution
         # of the wrapped Application Package
 
@@ -95,11 +86,11 @@ class ArgoWFRunnerExecutionHandler(ExecutionHandler):
         self.conf["service_logs"]["length"] = str(len(services_logs))
         logger.info(f"service_logs: {self.conf['service_logs']}")
 
-    def pre_execution_hook(self, **kwargs):
-        return super().pre_execution_hook(**kwargs)
+    #def pre_execution_hook(self, **kwargs):
+    #    return super().pre_execution_hook(**kwargs)
 
-    def post_execution_hook(self, **kwargs):
-        return super().post_execution_hook(**kwargs)
+    #def post_execution_hook(self, **kwargs):
+    #    return super().post_execution_hook(**kwargs)
 
 
 def {{cookiecutter.workflow_id |replace("-", "_")  }}(conf, inputs, outputs):
